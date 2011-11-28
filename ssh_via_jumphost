@@ -2,5 +2,5 @@ Host hivemg01
 Hostname hivemg01.digihive.uk
 
 Host github.com
-ProxyCommand ssh -q -A root@hivemg01.digihive.uk netcat -w 1 %h %p
+ProxyCommand ssh -q -A root@hivemg01 netcat -w 1 %h %p
 TCPKeepAlive yes
