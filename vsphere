@@ -1,30 +1,25 @@
 #!/usr/bin/env ruby
 
+# CLI for managing vmware instances
+
 require 'rubygems'
 require 'fog'
 require 'thor'
 
 Fog.mock!
 
-
-# connect to vsphere instance 
-# credentials in ~/.fog
-# f=Fog::Compute.net(:provider => "vsphere")
-
-
 # if iterating through instances is slow, then templates needs to be found by path -
-# no methods for finding just templates, just another vm instance
-
-#create new vm
-#new_vm=f.vm_clone('instance_uuid' => '564d3f91-3452-a509-a678-1246f7897979', 'name' => 'clonedvm', 'path' => '/Datacenters/C/')
+# Fog::Compute[:vsphere].servers.all('path' => '/Datacenters/whatever/the/location/')
+# no methods for finding just templates, considered just another vm instance
 
 class VsphereCLI < Thor
   
-  @@f=Fog::Compute.new(:provider => "vsphere", :vsphere_username => "patrick", :vsphere_password=> "pipo1234**", :vsphere_server => "172.16.44.141")
+  #@@f=Fog::Compute.new(:provider => "vsphere", :vsphere_username => "patrick", :vsphere_password=> "pipo1234**", :vsphere_server => "172.16.44.141")
+  @@f=Fog::Compute.new(:provider => "vsphere")
   #attributes to display in tables
   @@attributes = [:name, :instance_uuid, :hypervisor, :is_a_template]
   
-  desc "templates", "list the templates" 
+  desc "templates", "List all templates" 
   def templates
     result = Array.new
     @@f.servers.each do |x|
@@ -33,12 +28,12 @@ class VsphereCLI < Thor
     Formatador.display_table(result.map {|x| x.attributes}, @@attributes)
   end
   
-  desc "vm", "list all virtual machines, including templates"
+  desc "vm", "List all virtual machines, including templates"
   def vm
     @@f.servers.table(@@attributes)
   end
   
-  desc "instances", "list all virtual machine instances"
+  desc "instances", "List all virtual machine instances"
   def instances
     result = Array.new
     @@f.servers.each do |x|
@@ -46,6 +41,24 @@ class VsphereCLI < Thor
     end
     Formatador.display_table(result.map {|x| x.attributes}, @@attributes)
   end
+  
+  # TODO
+  desc "clone [INSTANCE_UUID] [NAME] ([PATH])", "Clone a vm"
+  def clone(uuid=nil, name=nil, path=nil)
+    if (uuid.nil?)  
+      puts "please provide an template instance_uuid"
+      exit
+    end
+    if (name.nil?)  
+      puts "please provide an new instance name"
+      exit
+    end
+    if (path.nil?)
+      path = @@f.servers.get(uuid).path
+    end
+    new_vm=@@f.vm_clone('instance_uuid' => uuid, 'name' => name, 'path' => path)
+  end
+  
 end
 
 VsphereCLI.start
