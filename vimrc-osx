@@ -1,0 +1,45 @@
+set modeline
+set autoindent
+set softtabstop=2
+set tabstop=2
+set shiftwidth=2
+set expandtab
+
+set showmatch
+set ruler
+syntax enable
+nmap <C-N> <C-N> :set invnumber <CR>
+
+set laststatus=2
+set number
+
+"utility prefixes - backslash <whatever>
+:nmap \l :setlocal number!<CR>
+:nmap \o :set paste!<CR>
+
+"move rowsize, rather than linewise
+:nmap j gj
+:nmap k gk
+
+"emacs style movement
+:cnoremap <C-a>  <Home>
+:cnoremap <C-b>  <Left>
+:cnoremap <C-f>  <Right>
+:cnoremap <C-d>  <Delete>
+:cnoremap <M-b>  <S-Left>
+:cnoremap <M-f>  <S-Right>
+:cnoremap <M-d>  <S-right><Delete>
+:cnoremap <Esc>b <S-Left>
+:cnoremap <Esc>f <S-Right>
+:cnoremap <Esc>d <S-right><Delete>
+:cnoremap <C-g>  <C-c>
+
+"searching
+:set incsearch
+:set ignorecase
+:set smartcase
+:set hlsearch
+:nmap \q :nohlsearch<CR>
+
+"powerline
+set rtp+=/usr/local/lib/python2.7/site-packages//powerline/bindings/vim
